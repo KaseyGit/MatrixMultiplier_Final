@@ -1,0 +1,57 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 12/06/2025 07:19:05 PM
+// Design Name: 
+// Module Name: MatrixMultipler2x2
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module MatrixMultiplier2x2(
+    /*
+        [a11 a12] [b11 b12] 
+        [a21 a22] [b21 b22]
+        
+        p11 = a11 * b11 + a12 * b21
+        p12 = a11 * b12 + a12 * b22
+        p21 = a21 * b11 + a22 * b21
+        p22 = a21 * b12 + a22 * b22
+    */
+    
+    //multiplicands matrix a and b
+    input [1:0] a11, a12, a21, a22,
+    input [1:0] b11, b12, b21, b22,
+    
+    //product matrix p
+    output [3:0] p11, p12, p21, p22    
+);
+
+//adder outputs
+wire [4:0] p11_sum, p12_sum, p21_sum, p22_sum;
+
+//perform calculations using the multiplier ip
+Method2MultiplierIP p11_calculation(.A_0(a11), .B_0(b11), .A_1(a12), .B_1(b21), .S_0(p11_sum));
+Method2MultiplierIP p12_calculation(.A_0(a11), .B_0(b12), .A_1(a12), .B_1(b22), .S_0(p12_sum));
+Method2MultiplierIP p21_calculation(.A_0(a21), .B_0(b11), .A_1(a22), .B_1(b21), .S_0(p21_sum));
+Method2MultiplierIP p22_calculation(.A_0(a21), .B_0(b12), .A_1(a22), .B_1(b22), .S_0(p22_sum));
+
+//truncate for final result (5 bits to 4 bits
+assign p11 = p11_sum[3:0];
+assign p12 = p12_sum[3:0];
+assign p21 = p21_sum[3:0];
+assign p22 = p22_sum[3:0];
+
+endmodule
