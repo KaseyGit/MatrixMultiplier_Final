@@ -1,0 +1,50 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 12/04/2025 12:24:35 PM
+// Design Name: 
+// Module Name: top_module
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module top_module(input clk, input reset, input [15:0] switch, output [6:0] seg, output [3:0] anode);
+
+
+//2x2 matrix elements      
+wire [1:0] a11 = switch[1:0];
+wire [1:0] a12 = switch[3:2];
+wire [1:0] a21 = switch[5:4];
+wire [1:0] a22 = switch[7:6];
+
+wire [1:0] b11 = switch[9:8];
+wire [1:0] b12 = switch[11:10];
+wire [1:0] b21 = switch[13:12];
+wire [1:0] b22 = switch[15:14];
+
+//product matrix elements
+wire [3:0] p11, p12, p21, p22;
+
+wire [15:0] display_result;
+assign display_result = {p11, p12, p21, p22};
+
+MatrixMultiplier2x2 multiplier(.a11(a11), .a12(a12), .a21(a21), .a22(a22),
+                               .b11(b11), .b12(b12), .b21(b21), .b22(b22),
+                               .p11(p11), .p12(p12), .p21(p21), .p22(p22));
+
+multiseg_driver display(.clk(clk), .en(1'b1), .bcd_in(display_result), .seg_anode(anode), .seg_cathode(seg), .rdy());
+
+
+endmodule
